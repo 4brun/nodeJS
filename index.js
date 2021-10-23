@@ -24,7 +24,7 @@ const chengeColor = () => {
 
 const getMassage = (num) => {
    if (primeNum) primeNum = false
-   console.log(myColors[counter](`${num}`));
+   console.log(myColors[counter](num))
    chengeColor()
 }
 
