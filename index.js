@@ -1,34 +1,48 @@
-const colors = require("colors/safe");
+const moment = require('moment');
+const EventEmitter = require('events')
 
-const num1 = process.argv[2]
-const num2 = process.argv[3]
-const myColors = [colors.red, colors.yellow, colors.green]
-let counter = 0
-let primeNum = true
+const userData = process.argv[2] // час-день-месяц-год
 
-if (isNaN(num1)) console.log(colors.red('Not a number'))
+// class Timer extends EventEmitter {
+//    start(eventName, data) {
+//       console.log('start');
+//       this.emit(eventName, data)
+//    }
 
-const simpleNumber = (num) => {
-   if (num <= 1) return false
+//    end(eventName, cb) {
+//       console.log('end');
+//       this.on(eventName, cb)
+//    }
+// }
 
-   for (let i = 2; i < num; i++)
-      if (num % i === 0) return false
-   return true
+// const run = new Timer
+
+const runTimer = async (time) => {
+   const date = moment(time, 'HH DD MM YYYY')
+   const now = moment()
+   let diffTime
+
+   if (now > date) {
+      diffTime = now.diff(date)
+   } else {
+      diffTime = date.diff(now)
+   }
+
+   let duration = moment.duration(diffTime, 'milliseconds');
+   const interval = 1000
+   console.log(duration);
+   setInterval(() => {
+      if (duration.asMilliseconds() <= 0) {
+         console.log("STOP!");
+         clearInterval()
+      }
+      duration = moment.duration(duration.asMilliseconds() - interval, 'milliseconds');
+      console.log(`Years: ${duration._data.years}, Months: ${duration._data.months}, Days: ${duration._data.days}, ${duration._data.hours}:${duration._data.minutes}:${duration._data.seconds}`);
+   }, interval)
 }
 
-const chengeColor = () => {
-   counter++
-   if (counter > myColors.length - 1)
-      counter = 0
+if (!userData) {
+   console.log('Введите точку осчета в формате: "час-день-месяц-год"');
+} else {
+   runTimer(userData)
 }
-
-const getMassage = (num) => {
-   if (primeNum) primeNum = false
-   console.log(myColors[counter](num))
-   chengeColor()
-}
-
-for (let i = num1; i <= num2; i++) {
-   if (simpleNumber(i)) getMassage(i)
-}
-
