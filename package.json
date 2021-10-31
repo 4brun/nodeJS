@@ -1,0 +1,25 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "nodeJS",
+  "main": "index.js",
+  "dependencies": {
+    "inquirer": "^8.2.0",
+    "yargs": "^17.2.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4brun/nodeJS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4brun/nodeJS/issues"
+  },
+  "homepage": "https://github.com/4brun/nodeJS#readme"
+}
