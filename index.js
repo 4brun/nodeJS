@@ -10,11 +10,11 @@ const isDirectory = dirname => {
 
 const fileList = dirname => fs.readdirSync(dirname)
 
-const searhString = date => {
+const searchString = date => {
    inquirer.prompt([{
       name: 'searchString',
       type: 'input',
-      message: ' Введите строку для поиска в файле: '
+      message: 'Введите строку для поиска в файле: '
    }])
       .then(answer => {
          const index = date.indexOf(answer.searchString) // ищем строку в файле
@@ -43,7 +43,7 @@ const getList = directory => inquirer.prompt([
       } else {
          const date = fs.readFileSync(directory, 'utf-8')
          console.log(date) // выводим содержимое в консоль
-         searhString(date) // запускаем поиск строки
+         searchString(date) // запускаем поиск строки
       }
    })
 
