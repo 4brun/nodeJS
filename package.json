@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "inquirer": "^8.2.0",
+    "nodemon": "^2.0.14",
     "yargs": "^17.2.1"
   },
   "devDependencies": {},
