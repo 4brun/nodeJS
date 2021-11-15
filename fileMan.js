@@ -1,12 +1,32 @@
 const fs = require('fs')
 const path = require('path');
 const http = require('http')
+const socket = require('socket.io')
+const worker_threads = require('worker_threads')
 
 let content = ``;
+let clients = 0;
 
 const isDirectory = dirname => {
    const stat = fs.lstatSync(dirname)
    return stat.isDirectory()
+}
+
+const searchString = async (data) => {
+   return new Promise((res, rej) => {
+      const worker = new worker_threads.Worker('./worker.js', {
+         workerData: data
+      })
+
+      worker.on('message', res)
+      worker.on('error', rej)
+   })
+}
+
+const getResult = async (data) => {
+   let result = await searchString(data)
+   console.log('result', result) // тут всё норм, возвращает строку, всё ок
+   return result
 }
 
 const server = http.createServer((req, res) => {
@@ -44,8 +64,25 @@ const server = http.createServer((req, res) => {
       }
       content += `</ul>`
    }
-
-   res.end(content);
+   finalContent = fs.readFileSync(path.join(__dirname, 'fileMan.html'), 'utf-8')
+      .replace('##dir', content);
+   res.end(finalContent);
 })
 
-server.listen(3001);
+const io = socket(server)
+
+io.on('connection', client => {
+   clients++
+   client.broadcast.emit('new-user', clients)
+   client.emit('new-user', clients)
+   client.on('disconnect', () => {
+      clients--
+      client.broadcast.emit('user-off', clients)
+   })
+   client.on('client-search', (data) => {
+      const result = getResult(data)
+
+      client.emit('server-msg', result) // Почему то возвращает Promise { <pending> }
+   })
+})
+server.listen(3002);
