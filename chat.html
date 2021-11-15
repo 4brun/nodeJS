@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+      crossorigin="anonymous"></script>
+   <title>Chat app</title>
+</head>
+
+<body>
+   <input type="text" name="text" id="input" autofocus>
+   <button id="button">send</button>
+   <div id="massage"></div>
+   <script>
+      const socket = io('localhost:3001')
+      const msgBlock = document.getElementById('massage')
+      const btn = document.querySelector('button')
+      const input = document.querySelector('input')
+
+      socket.on('new-user', user => {
+         msgBlock.insertAdjacentHTML('beforeend', `<div>Подключился <b>${user}</b></div>`)
+      })
+      socket.on('server-msg', payload => {
+         msgBlock.insertAdjacentHTML('beforeend', `<div><b>${payload.user}</b> | ${payload.massage}</div>`)
+      })
+      socket.on('user-off', user => {
+         msgBlock.insertAdjacentHTML('beforeend', `<div> Отключился <b>${user}</b></div >`)
+
+      })
+      btn.addEventListener('click', () => {
+         const data = {
+            massage: input.value
+         }
+         input.value = ''
+         socket.emit('client-msg', data)
+      })
+   </script>
+</body>
+
+</html>

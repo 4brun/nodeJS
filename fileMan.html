@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://cdn.socket.io/4.3.2/socket.io.min.js"
+      integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+      crossorigin="anonymous"></script>
+   <title>File manager</title>
+</head>
+
+<body>
+   <div id="users">
+   </div>
+   <div id="searchForm">
+      <input type="text" id="input">
+      <button id="button">Search in file</button>
+   </div>
+   <div id="dir">
+      ##dir
+   </div>
+   <script>
+      const socket = io('localhost:3002')
+      const usersBlock = document.getElementById('users')
+      const button = document.querySelector('button')
+      const input = document.querySelector('input')
+      const content = document.getElementById('dir')
+
+      socket.on('new-user', users => {
+         usersBlock.insertAdjacentHTML('beforeend', `<div>Подключенных юзеров: <b>${users}</b></div>`)
+      })
+      socket.on('server-msg', result => {
+         content.insertAdjacentHTML('afterbegin', `<div>Найдено: <p style="color:red;"><b>${result}</b></p></div>`)
+      })
+      socket.on('user-off', user => {
+         usersBlock.insertAdjacentHTML(`<div>Подключенных юзеров: <b>${user}</b></div >`)
+      })
+      button.addEventListener('click', () => {
+         const data = {
+            file: content.textContent,
+            string: input.value
+         }
+
+         input.value = ''
+         socket.emit('client-search', data)
+      })
+   </script>
+
+</body>
+
+</html>
